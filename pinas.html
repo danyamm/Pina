@@ -607,7 +607,6 @@
         document.body.appendChild(notif);
         setTimeout(() => { notif.remove(); }, 1800);
     }
-    
     // Render Products Grid
     function renderProducts() {
         const grid = document.getElementById('productsGrid');
@@ -617,4 +616,78 @@
             const card = document.createElement('div');
             card.className = 'product-card';
             card.innerHTML = `
-                <img class="product-img" src="${getProductImage(prod)}" alt="${prod.name}" loading="lazy" onerror="this.src='https://picsum.photos/id/20/
+                <img class="product-img" src="${getProductImage(prod)}" alt="${prod.name}" loading="lazy" onerror="this.src='https://picsum.photos/id/20/400/400'">
+                <div class="product-info">
+                    <div class="product-title">${prod.name}</div>
+                    <div class="product-price">${getPriceInPEN(prod)}</div>
+                    <button class="add-to-cart" data-id="${prod.id}">
+                        <i class="fas fa-plus-circle"></i> Añadir al carrito
+                    </button>
+                </div>
+            `;
+            grid.appendChild(card);
+        });
+        
+        // event listeners add to cart
+        document.querySelectorAll('.add-to-cart').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const id = parseInt(btn.dataset.id);
+                addToCart(id);
+            });
+        });
+    }
+    
+    // Sidebar control
+    function openCart() {
+        document.getElementById('cartOverlay').classList.add('active');
+        document.getElementById('cartSidebar').classList.add('open');
+        updateCartUI();  // asegura datos frescos
+    }
+    
+    function closeCart() {
+        document.getElementById('cartOverlay').classList.remove('active');
+        document.getElementById('cartSidebar').classList.remove('open');
+    }
+    
+    // Event Listeners
+    document.getElementById('cartIcon').addEventListener('click', openCart);
+    document.getElementById('closeCartBtn').addEventListener('click', closeCart);
+    document.getElementById('cartOverlay').addEventListener('click', closeCart);
+    document.getElementById('checkoutBtn').addEventListener('click', () => {
+        if (cart.length === 0) {
+            showNotification("🛒 Aún no tienes productos en el carrito");
+            return;
+        }
+        alert("🧡 ¡Gracias por tu compra! (Demo) El total es " + document.getElementById('cartTotalPrice').innerText + " PEN. Pronto recibirás un link de pago.");
+        // Simulación de compra, no limpiamos carrito para demo pero podría limpiarse:
+        // cart = []; saveCartToLocal(); closeCart();
+    });
+    
+    // newsletter mockup
+    document.getElementById('newsBtn')?.addEventListener('click', () => {
+        const email = document.getElementById('newsEmail').value;
+        if(email && email.includes('@')) {
+            alert('🎉 ¡Suscripción exitosa! Revisa tu correo para el 10% OFF');
+            document.getElementById('newsEmail').value = '';
+        } else {
+            alert('Por favor ingresa un email válido.');
+        }
+    });
+    
+    // Inicializar página y productos
+    renderProducts();
+    updateCartUI();
+    
+    // Ajuste de errores de imagen: si falla la imagen de firebase, colocar placeholder temático.
+    window.onload = () => {
+        // si alguna imagen no carga, ya se encarga el onerror.
+    };
+    
+    // Sección de efecto de hover y estilos adicionales
+    console.log("🛍️ Piña Colada Boutique - Precios en Soles");
+</script>
+</body>
+</html>
+    
+    
